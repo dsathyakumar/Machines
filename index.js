@@ -63,6 +63,8 @@ const lightMachine = Machine({
 }, {
     guards: {
         isUnmendable: (ctx, evt, meta) => {
+            // we access via meta.state.event cos of this
+            // https://github.com/davidkpiano/xstate/issues/890
             console.log('isUnmendable!!!', evt, meta.state.event);
             let cannotBeMended = true;
             if (meta.state.event.watts && meta.state.event.watts > 50) {
