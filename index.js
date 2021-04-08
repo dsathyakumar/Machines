@@ -1,4 +1,4 @@
-const {Machine, interpret } = require('xstate');
+const {Machine, interpret, assign } = require('xstate');
 
 const lightMachine = Machine({
     strict: true,
@@ -42,6 +42,7 @@ const lightMachine = Machine({
             initial: "unknown",
             states: {
                 unknown: {
+                    entry: ['updatebroken'],
                     always: [
                         {
                             target: "unmendable",
@@ -85,6 +86,13 @@ const lightMachine = Machine({
         }
     },
     actions: {
+        updatebroken: assign((ctx, evt) => {
+            console.log('updating broken state');
+            return {
+                isOn:false,
+                isBroken: true
+            }
+        }),
         canmend: (ctx, evt) => {
             console.log('Yay! mended');
         },
@@ -92,15 +100,23 @@ const lightMachine = Machine({
         logBreaking: (ctx, evt) => {
             console.log(`I'm transitioning into breaking`);
         },
-        enterlit: (ctx, evt) => {
+        enterlit: assign((ctx, evt) => {
             console.log('Im entering LIT state');
-        },
+            return {
+                isOn: true,
+                isBroken: false
+            }
+        }),
         exitlit: (ctx, evt) => {
             console.log('Im exiting LIT state');
         },
-        enterunlit: (ctx, evt) => {
+        enterunlit: assign((ctx, evt) => {
             console.log('Im entering UNLIT state');
-        },
+            return {
+                isOn: false,
+                isBroken: false
+            }
+        }),
         exitunlit: (ctx, evt) => {
             console.log('Im exiting UNLIT state');
         },
@@ -109,7 +125,7 @@ const lightMachine = Machine({
 });
 
 const service = interpret(lightMachine)
-    .onTransition(state => console.log(`\n stateVal = ${state.value}`))
+    .onTransition(state => console.log(`\n stateVal = ${state.value}, \n context=${JSON.stringify(state.context)}`))
     .start();
 // console.log(service.initialState);
 
