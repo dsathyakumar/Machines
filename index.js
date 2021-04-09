@@ -14,12 +14,14 @@ const lightMachine = Machine({
             on: {
                 LIT: {
                     target: "lit",
-                    actions: ["lighting"]
+                    actions: ["lighting"],
+                    internal: false
                 },
                 STRIKE: {
                     actions: ['logBreaking'],
                     target: "broken",
-                    cond: "isBroken"
+                    cond: "isBroken",
+                    internal: false
                 }
             },
             exit: ["exitunlit"]
@@ -28,12 +30,14 @@ const lightMachine = Machine({
             entry: ["enterlit"],
             on: {
                 UNLIT: {
-                    target: "unlit"
+                    target: "unlit",
+                    internal: false
                 },
                 STRIKE: {
                     actions: ['logBreaking'],
                     target: "broken",
-                    cond: "isBroken"
+                    cond: "isBroken",
+                    internal: false
                 }
             },
             exit: ["exitlit"]
@@ -47,10 +51,12 @@ const lightMachine = Machine({
                         {
                             target: "unmendable",
                             cond: "isUnmendable",
+                            internal: false
                         },
                         {
                             target: "#lightMachine.unlit",
-                            actions: ["canmend"]
+                            actions: ["canmend"],
+                            internal: false
                         }
                     ]
                 },
